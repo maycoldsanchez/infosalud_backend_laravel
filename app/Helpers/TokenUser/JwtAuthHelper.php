@@ -5,13 +5,18 @@ use App\AO\TokenUsersAO;
 
 class JwtAuthHelper
 {
-    public function saveToken($infoToken){
-        TokenUsersAO::disableAllTokens($infoToken);
-        TokenUsersAO::setToken($infoToken);
+
+    public function __construct(
+        private TokenUsersAO $tokenUsersAO
+    ) {}
+
+    public function saveToken($user, $token, $ip){
+        $this->tokenUsersAO->disableAllTokens($user);
+        $this->tokenUsersAO->setToken($user, $token, $ip);
     }
 
     public function checkToken($infoToken){
-        $intCountLoggedRegister = TokenUsersAO::countLoggedRegister($infoToken);
+        $intCountLoggedRegister = $this->tokenUsersAO->countLoggedRegister($infoToken);
         if($intCountLoggedRegister == 1){
             $register = true;
         } else {

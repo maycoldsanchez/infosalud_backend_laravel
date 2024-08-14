@@ -3,26 +3,30 @@
 namespace App\AO;
 
 use App\Models\Users\TokenUsers;
+use Faker\Provider\Uuid;
 
 class TokenUsersAO
 {
 
-    public static function setToken($infoToken)
+    public static function setToken($user, $token, $ip)
     {
         $objToken = [
-            'user_ip'      => $infoToken['user_ip'],
-            'user_id' => $infoToken['user'],
-            'token'   => $infoToken['token'],
-            'state' => 1
+            'user_ip'   => $ip,
+            'user_id'   => $user->id,
+            'token'     => $token,
+            'state'     => 1
         ];
 
-        return TokenUsers::create($objToken)->get('ID');
+        return TokenUsers::create($objToken)->get();
     }
 
-    public static function disableAllTokens($infoToken)
+    public static function disableAllTokens($user)
     {
-        $objToken['state'] = 0;
-        TokenUsers::where('user_id', $infoToken['user'])
+
+        $objToken = [
+           'state' => 0
+        ];
+        TokenUsers::where('user_id', $user->id)
             ->update($objToken);
     }
 

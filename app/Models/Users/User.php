@@ -7,6 +7,7 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
 use App\Models\Roles;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Activitylog\LogOptions;
+use Illuminate\Support\Str;
 
 class User extends Authenticatable implements JWTSubject
 {
@@ -77,7 +78,7 @@ class User extends Authenticatable implements JWTSubject
 
     public function userRole()
     {
-        return $this->belongsTo(Roles::class, 'role', 'role');
+        return $this->belongsTo(Roles::class, 'role', 'id');
     }
 
     public function scopeActive($query)
@@ -99,5 +100,12 @@ class User extends Authenticatable implements JWTSubject
             ->logOnly(['*'])
             ->useLogName('Users')
             ->logOnlyDirty();
+    }
+
+    protected static function booted(): void
+    {
+        static::creating(function (User $user) {
+            $user->id = Str::uuid();
+        });
     }
 }

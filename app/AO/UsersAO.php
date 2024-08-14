@@ -3,7 +3,6 @@
 namespace App\AO;
 
 use App\Models\Users\User;
-use App\Models\AdditionalUserInformation\DocumentType;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class UsersAO
@@ -27,7 +26,13 @@ class UsersAO
         ->get();
     }
 
-    public static function getAllUsers($request){
+    public static function getAllUsers()
+    {
+        return User::with(['userRole'])->get();
+    }
+
+
+    public static function getAllUsersTable($request){
         $userAuth = JWTAuth::user();
         $result = User::with(
             [
@@ -43,7 +48,7 @@ class UsersAO
         return $result;
     }
 
-    public static function validateUser($data, $document) {
+    public static function validateUser($data) {
         return User::select('id','deleted', 'role', 'email')
         ->where('email', $data)
         ->first();

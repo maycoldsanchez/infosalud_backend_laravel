@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\BL\Users\UsersBL;
+use App\BL\UsersBL;
 use App\Http\Requests\Users\DeleteUsersRequest;
 use App\Http\Requests\Users\UsersRequest;
 use App\Http\Requests\Users\UsersEditRequest;
@@ -13,51 +13,38 @@ use App\Http\Requests\Users\getWorkCertificateByUserRequest;
 
 class UsersController extends Controller
 {
-    public static function storeUser(UsersRequest $request){
-        $response = UsersBL::create($request);
+    public function __construct(
+        private UsersBL $userBl,
+    ) {}
+
+    public function storeUser(UsersRequest $request){
+        $response = $this->userBl->create($request);
         return response()->json($response, 200);
     }
 
-    public static function updateUser(UsersEditRequest $request){
-        $response = UsersBL::update($request);
+    public function updateUser(UsersEditRequest $request){
+        $response = $this->userBl->update($request);
         return response()->json($response, 200);
     }
 
-    public static function deleteUser(DeleteUsersRequest $request){
-        $response = UsersBL::delete($request);
+    public function deleteUser(DeleteUsersRequest $request){
+        $response = $this->userBl->delete($request);
         return response()->json($response, 200);
     }
 
-    public static function getUser(getUsersRequest $request){
-        $response = UsersBL::getAllUsers($request);
+    public function getUsers()
+    {
+        $response = $this->userBl->getAllUsers();
         return response()->json($response, 200);
     }
 
-    public static function import(Request $request){
-        $response = UsersBL::import($request);
+    public function getUsersTable(getUsersRequest $request){
+        $response = $this->userBl->getAllUsersTable($request);
         return response()->json($response, 200);
     }
 
-    public function validateUser($data, $document){
-        return UsersBL::validateUser($data, $document);
-    }
 
-    public function getUserByDocumentLogin($data) {
-        return UsersBL::getUserByDocumentLogin($data);
-    }
-
-    public function getTypeDocument(){
-        $response = UsersBL::getTypeDocument();
-        return response()->json($response, 200);
-    }
-
-    public function findUserByDocumentNumber(getWorkCertificateByUserRequest $request){
-        $response = UsersBL::findUserByDocumentNumber($request);
-        return response()->json($response, 200);
-    }
-
-    public function getUsersByCompany(){
-        $response = UsersBL::getUsersByCompany();
-        return response()->json($response, 200);
+    public function validateUser($data){
+        return $this->userBl->validateUser($data);
     }
 }
